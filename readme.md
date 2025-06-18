@@ -120,3 +120,6 @@ Mot de passe : khalid
 
 Important : Après la première connexion, modifiez les mots de passe par défaut via les paramètres du profil utilisateur pour des raisons de sécurité.
 Si les comptes ne sont pas créés ou si la connexion échoue, exécutez le script de remplissage (s'il existe) :
+
+
+devloper par abdelkhalk essaid
