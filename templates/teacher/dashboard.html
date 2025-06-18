@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Mon Emploi du Temps</h2>
+
+    <!-- Teacher Information Card -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6 animate__animated animate__fadeInUp">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Informations Enseignant</h3>
+                <div class="mt-2">
+                    <p class="text-gray-600"><span class="font-medium">Nom:</span> {{ teacher.first_name }} {{ teacher.last_name }}</p>
+                    <p class="text-gray-600"><span class="font-medium">Type:</span> {{ teacher.type }}</p>
+                    <p class="text-gray-600"><span class="font-medium">Heures max/semaine:</span> {{ teacher.max_hours }}h</p>
+                </div>
+            </div>
+            
+            <!-- Calculate and display total weekly hours using the same method as PDF -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-700">Statistiques</h3>
+                <div class="mt-2">
+                    {% set ns = namespace(total_hours=0) %}
+                    {% for day in days %}
+                        {% for slot_idx in range(time_slots|length) %}
+                            {% for schedule in schedule_grid[day][slot_idx] %}
+                                {% set time_diff = (schedule.end_time.hour * 3600 + schedule.end_time.minute * 60) - 
+                                                 (schedule.start_time.hour * 3600 + schedule.start_time.minute * 60) %}
+                                {% set ns.total_hours = ns.total_hours + (time_diff / 3600) %}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                    <p class="text-gray-600"><span class="font-medium">Total heures/semaine:</span> {{ "%.1f"|format(ns.total_hours) }}h</p>
+                </div>
+            </div>
+            
+            <!-- PDF Export Button -->
+            <div class="flex items-end justify-end">
+                <a href="{{ url_for('teacher.export_teacher_schedule_pdf') }}" 
+                   class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Exporter en PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card for Teacher Schedule -->
+    <div class="bg-white shadow-md rounded-lg p-6 animate__animated animate__fadeInUp">
+        <div>
+            <h4 class="text-xl font-semibold text-gray-700 mb-4">Mes cours</h4>
+        </div>
+        <div class="card-body">
+            <!-- Schedule Grid -->
+            {% if schedule_grid %}
+            <div class="overflow-x-auto">
+                <table id="schedule_grid" class="min-w-full border border-gray-200 divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">Jour \ Heure</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">08h30-10h30</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">10h40-12h40</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">13h00-15h00</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">15h10-17h10</th>
+                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">17h20-19h20</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for day in days %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600 border border-gray-200">{{ day }}</td>
+                            {% for slot_idx in range(time_slots|length) %}
+                            {% set start_time, end_time = time_slots[slot_idx] %}
+                            <td class="px-6 py-4 text-sm text-gray-600 border border-gray-200" data-day="{{ day }}" data-slot="{{ start_time }}-{{ end_time }}">
+                                {% for schedule in schedule_grid[day][slot_idx] %}
+                                <div class="bg-blue-100 p-2 rounded mb-1 text-center" data-schedule-id="{{ schedule.id }}">
+                                    <div class="font-semibold">{{ schedule.course.name }} ({{ schedule.course.type }})</div>
+                                    <div>Filière: {{ schedule.program.name }}</div>
+                                    <div>{{ schedule.group.name if schedule.group else 'Tous' }}</div>
+                                    <div>{{ schedule.room.name }}</div>
+                                </div>
+                                {% endfor %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-500 text-center py-4">
+                Aucun cours trouvé. Contactez l'administrateur si vous pensez que c'est une erreur.
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

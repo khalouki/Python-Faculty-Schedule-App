@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Gestion des Cours</h2>
+
+    <!-- Card for Adding Course -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold text-gray-700 mb-4">Ajouter un cours</h4>
+        <form method="POST" action="{{ url_for('admin.manage_courses') }}" class="space-y-6">
+            <input type="hidden" name="_method" value="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nom du cours</label>
+                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                </div>
+                <div>
+                    <label for="code" class="block text-sm font-medium text-gray-700 mb-2">Code du cours</label>
+                    <input type="text" id="code" name="code" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                </div>
+                <div>
+                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select id="type" name="type" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        <option value="Cours">Cours</option>
+                        <option value="TD">TD</option>
+                        <option value="TP">TP</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="duration" class="block text-sm font-medium text-gray-700 mb-2">Durée (heures)</label>
+                    <input type="number" id="duration" name="duration" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required min="1">
+                </div>
+                <div>
+                    <label for="program" class="block text-sm font-medium text-gray-700 mb-2">Filiére (department)</label>
+                    <select id="program" name="program" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        {% for program in programs %}
+                        <option value="{{ program.id }}">{{ program.name }} ({{ program.department.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="teacher" class="block text-sm font-medium text-gray-700 mb-2">Enseignant</label>
+                    <select id="teacher" name="teacher" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200">Ajouter le cours</button>
+        </form>
+    </div>
+
+    <!-- Card for Course List -->
+    <div class="bg-white shadow-md rounded-lg p-6 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold text-gray-700 mb-4">Liste des cours</h4>
+        {% if courses %}
+        <div class="overflow-x-auto">
+            <div class="max-h-[320px] overflow-y-auto">  <!-- Fixed height for 4 rows + header -->
+                <table class="min-w-full divide-y border border-[#f1e9e9] border-solid border-[1px] divide-purple-200">
+                    <thead class="bg-purple-50 sticky top-0">  <!-- Make header sticky -->
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Nom</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Durée</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Programme</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Enseignant</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Date de création</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-purple-200">
+                        {% for course in courses %}
+                        <tr class="hover:bg-gray-50">  <!-- Add hover effect -->
+                            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{{ course.name }}</td>
+                            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{{ course.duration }} H</td>
+                            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{{ course.program.name }} ({{ course.program.department.name }})</td>
+                            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{{ course.teacher.first_name }} {{ course.teacher.last_name }}</td>
+                            <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-600">{{ course.created_at.strftime('%d/%m/%Y') }}</td>
+                            <td class="px-3 py-4 whitespace-nowrap text-sm">
+                                <div class="flex space-x-2">  <!-- Better button grouping -->
+                                    <button type="button" class="text-white text-xs font-bold bg-blue-600 rounded px-3 py-1" onclick="openEditModal({{ course.id }}, '{{ course.name }}', '{{ course.code }}', '{{ course.type }}', {{ course.duration }}, {{ course.program_id }}, {{ course.teacher_id }})">
+                                        Modifier
+                                    </button>
+                                    <form action="{{ url_for('admin.delete_course', course_id=course.id) }}" method="POST" class="inline">
+                                        <button type="submit" class="text-white text-xs font-bold bg-red-500 rounded px-3 py-1" onclick="return confirm('Voulez-vous vraiment supprimer ce cours ?')">
+                                            Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center py-4">Aucun cours trouvé. Ajoutez un cours pour commencer.</p>
+        {% endif %}
+    </div>
+    <!-- Modal for Editing Course -->
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Modifier le cours</h3>
+            <form method="POST" action="{{ url_for('admin.manage_courses') }}" class="space-y-4">
+                <input type="hidden" name="_method" value="PUT">
+                <input type="hidden" name="course_id" id="edit_course_id">
+                <div>
+                    <label for="edit_name" class="block text-sm font-medium text-gray-700 mb-2">Nom du cours</label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_name" name="name" required>
+                </div>
+                <div>
+                    <label for="edit_code" class="block text-sm font-medium text-gray-700 mb-2">Code du cours</label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_code" name="code" required>
+                </div>
+                <div>
+                    <label for="edit_type" class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_type" name="type" required>
+                        <option value="Cours">Cours</option>
+                        <option value="TD">TD</option>
+                        <option value="TP">TP</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="edit_duration" class="block text-sm font-medium text-gray-700 mb-2">Durée (heures)</label>
+                    <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_duration" name="duration" required min="1">
+                </div>
+                <div>
+                    <label for="edit_program" class="block text-sm font-medium text-gray-700 mb-2">Programme (Département)</label>
+                    <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_program" name="program" required>
+                        {% for program in programs %}
+                        <option value="{{ program.id }}">{{ program.name }} ({{ program.department.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="edit_teacher" class="block text-sm font-medium text-gray-700 mb-2">Enseignant</label>
+                    <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_teacher" name="teacher" required>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" class="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200" onclick="closeEditModal()">Annuler</button>
+                    <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/admin_courses.js') }}?v={{ config.VERSION }}"></script>
+
+{% endblock %}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Système de Gestion des Emplois du Temps</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/x-icon">
+    <style>  
+            body {
+                font-family: 'Inter', sans-serif;
+                background-image: url("{{ url_for('static', filename='images/back2.jpg') }}");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+                backdrop-filter: blur(5px);
+            }
+    
+        </style>
+</head>
+<body class="font-inter min-h-screen">
+    <nav class="bg-gradient-to-r from-green-600 to-green-800 mb-8 shadow-lg top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center space-x-2">
+                    <a href="#" class="flex items-center space-x-2 no-underline hover:opacity-80 transition-opacity">
+                      <img 
+                        src="{{ url_for('static', filename='images/logo.png') }}" 
+                        alt="Emploi du Temps Logo"
+                        class="h-10 w-10 object-contain rounded-full shadow-sm border border-white/20" 
+                        loading="lazy"
+                      >
+                      <span class="text-white text-2xl font-bold">Emploi du Temps</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'admin_dashboard' else '' }}">Tableau de bord</a>
+                            <a href="{{ url_for('admin.manage_departments') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'manage_departments' else '' }}">Départements</a>
+                            <a href="{{ url_for('admin.manage_programs') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'manage_programs' else '' }}">Filières</a>
+                            <a href="{{ url_for('admin.manage_teachers') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'manage_teachers' else '' }}">Enseignants</a>
+                            <a href="{{ url_for('admin.manage_courses') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'manage_courses' else '' }}">Cours</a>
+                            <a href="{{ url_for('admin.manage_rooms') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'manage_rooms' else '' }}">Salles</a>
+                            <a href="{{ url_for('admin.manage_schedule') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'manage_schedule' else '' }}">Emploi du temps</a>
+                            <a href="{{ url_for('auth.logout') }}" class="text-white hover:text-green-200 px-3 py-2 text-sm font-bold flex items-center bg-green-700/50 hover:bg-green-700 rounded-full w-10 h-10 justify-center transition-all">
+                                <i data-lucide="log-out" class="h-5 w-5"></i>
+                            </a>
+                        {% elif current_user.role == 'teacher' %}
+                            <a href="{{ url_for('teacher.teacher_dashboard') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'teacher_dashboard' else '' }}">Mon emploi du temps</a>
+                            <a href="{{ url_for('auth.logout') }}" class="text-white hover:text-green-200 px-3 py-2 text-sm font-bold flex items-center bg-green-700/50 hover:bg-green-700 rounded-full w-10 h-10 justify-center transition-all">
+                                <i data-lucide="log-out" class="h-5 w-5"></i>
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('student.student_dashboard') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'student_dashboard' else '' }}">Mon emploi du temps</a>
+                            <a href="{{ url_for('auth.logout') }}" class="text-white hover:text-green-200 px-3 py-2 text-sm font-bold flex items-center bg-green-700/50 hover:bg-green-700 rounded-full w-10 h-10 justify-center transition-all">
+                                <i data-lucide="log-out" class="h-5 w-5"></i>
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="nav-link text-white hover:text-green-200 px-3 py-2 text-sm font-bold {{ 'active' if request.endpoint == 'login' else '' }}">Connexion</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn-primary bg-white text-green-700 hover:bg-green-50 px-4 py-2 rounded-md text-sm font-bold transition-all shadow-sm">Inscription</a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" type="button" class="text-white hover:text-green-200 focus:outline-none">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden mobile-menu absolute left-0 right-0 bg-green-800/95 backdrop-blur-md shadow-lg rounded-b-lg overflow-hidden">
+                <div style="background-color: #529152eb;" class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                            <a href="{{ url_for('admin.admin_dashboard') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'admin_dashboard' else '' }}">Tableau de bord</a>
+                            <a href="{{ url_for('admin.manage_departments') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'manage_departments' else '' }}">Départements</a>
+                            <a href="{{ url_for('admin.manage_programs') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'manage_programs' else '' }}">Filières</a>
+                            <a href="{{ url_for('admin.manage_teachers') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'manage_teachers' else '' }}">Enseignants</a>
+                            <a href="{{ url_for('admin.manage_courses') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'manage_courses' else '' }}">Cours</a>
+                            <a href="{{ url_for('admin.manage_rooms') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'manage_rooms' else '' }}">Salles</a>
+                            <a href="{{ url_for('admin.manage_schedule') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'manage_schedule' else '' }}">Emploi du temps</a>
+                            <a href="{{ url_for('auth.logout') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold flex items-center">
+                                <i data-lucide="log-out" class="h-5 w-5 mr-2"></i> Déconnexion
+                            </a>
+                        {% elif current_user.role == 'teacher' %}
+                            <a href="{{ url_for('teacher.teacher_dashboard') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'teacher_dashboard' else '' }}">Mon emploi du temps</a>
+                            <a href="{{ url_for('auth.logout') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold flex items-center">
+                                <i data-lucide="log-out" class="h-5 w-5 mr-2"></i> Déconnexion
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('student.student_dashboard') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'student_dashboard' else '' }}">Mon emploi du temps</a>
+                            <a href="{{ url_for('auth.logout') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold flex items-center">
+                                <i data-lucide="log-out" class="h-5 w-5 mr-2"></i> Déconnexion
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'login' else '' }}">Connexion</a>
+                        <a href="{{ url_for('auth.register') }}" class="text-white hover:bg-green-700 block px-3 py-2 rounded-md text-base font-bold {{ 'bg-green-700' if request.endpoint == 'register' else '' }}">Inscription</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div class="card animate__animated animate__fadeIn">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <script>
+            {% for category, message in messages %}
+                Swal.fire({
+                    icon: '{{ category }}',
+                    text: '{{ message }}',
+                    position: 'top',  <!-- Changed to 'top' -->
+                    toast: true,      <!-- Makes it behave like a toast notification -->
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#f8fafc',
+                    customClass: {
+                        popup: 'swal-custom-top',  <!-- New custom class -->
+                        title: 'text-gray-800 font-bold',
+                        content: 'text-gray-600'
+                    },
+                    backdrop: false,
+                    width: 'auto',
+                    padding: '0.5rem 1rem'
+                });
+            {% endfor %}
+        </script>
+    {% endif %}
+{% endwith %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='script.js') }}?v={{ config.VERSION }}"></script>
+{% endblock %}
+</body>
+</html>

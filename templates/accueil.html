@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPBM - Faculté Polydisciplinaire de Beni Mellal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'slide-in': 'slideIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../static/css/acceuille.css">
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 backdrop-blur-md bg-white/90">
+        <div class="container mx-auto px-4 py-4">
+            <!-- Desktop Navigation -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3 animate-slide-in">
+                    <div class="w-[4rem] h-[4rem] rounded-full overflow-hidden border border-gray-200 shadow-sm">
+                        <img src="static/images/fpbm.png" alt="FPBM Logo" class="w-full h-full object-cover">
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-primary-800">FPBM</h1>
+                        <p class="text-sm text-gray-600">Faculté Polydisciplinaire de Beni Mellal</p>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-button" class="md:hidden text-primary-600 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+
+                <!-- Desktop buttons -->
+                <div class="hidden md:flex space-x-3 animate-slide-in">
+                    <a href="/login" class="group border border-primary-600 text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-md transition-all duration-200 flex items-center">
+                        <span>Se Connecter</span>
+                    </a>
+                    <a href="/registre" class="btn-primary bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-all duration-200 flex items-center">
+                        <span>S'inscrire</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation Menu -->
+            <div id="mobile-menu" class="mobile-menu md:hidden bg-white shadow-md rounded-b-lg absolute left-0 right-0 mt-2 px-4 py-3 z-50">
+                <div class="flex flex-col space-y-3">
+                    <a href="/login" class="group border border-primary-600 text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-md transition-all duration-200 flex items-center justify-center">
+                        <span>Se Connecter</span>
+                    </a>
+                    <a href="/registre" class="btn-primary bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md transition-all duration-200 flex items-center justify-center">
+                        <span>S'inscrire</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient py-16 md:py-24">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0 animate-slide-up">
+                <h2 class="text-3xl md:text-5xl font-bold text-primary-800 mb-6 leading-tight">
+                    Bienvenue à la Faculté Polydisciplinaire de Beni Mellal
+                </h2>
+                <p class="text-gray-700 mb-8 text-lg">
+                    Un établissement d'excellence dédié à la formation et à la recherche dans diverses disciplines.
+                </p>
+                <a href="#programmes" class="btn-primary group bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-md flex items-center inline-block">
+                    Découvrir nos programmes 
+                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+            </div>
+            <div class="md:w-1/2 flex justify-center animate-fade-in">
+                <div class="relative overflow-hidden rounded-xl shadow-xl">
+                    <img src="static/images/logo.png" alt="FPBM Campus" class="w-full max-w-md">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-primary-900/20 to-transparent"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="py-16 md:py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-primary-800 mb-12">Comment Commencer</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Step 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="flex justify-center">
+                        <div class="bg-primary-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                            <i class="fas fa-user-plus text-primary-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl text-center font-semibold text-primary-800 mb-3">Créer un Compte</h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Inscrivez-vous pour accéder aux services numériques de la faculté.
+                    </p>
+                    <div class="flex justify-end">
+                        <a href="#" class="group text-primary-600 hover:text-primary-700 flex items-center transition-all">
+                            Commencer 
+                            <i class="fas fa-chevron-right ml-1 text-sm group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="flex justify-center">
+                        <div class="bg-primary-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                            <i class="fas fa-calendar-alt text-primary-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl text-center font-semibold text-primary-800 mb-3">Accéder à l'Emploi du Temps</h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Consultez votre emploi du temps, les salles de cours et les horaires des examens.
+                    </p>
+                    <div class="flex justify-end">
+                        <a href="#" class="group text-primary-600 hover:text-primary-700 flex items-center transition-all">
+                            Voir l'emploi du temps 
+                            <i class="fas fa-chevron-right ml-1 text-sm group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="flex justify-center">
+                        <div class="bg-primary-100 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-6">
+                            <i class="fas fa-book-open text-primary-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl text-center font-semibold text-primary-800 mb-3">Ressources Pédagogiques</h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Accédez aux cours en ligne, aux supports pédagogiques et à la bibliothèque numérique.
+                    </p>
+                    <div class="flex justify-end">
+                        <a href="#" class="group text-primary-600 hover:text-primary-700 flex items-center transition-all">
+                            Explorer les ressources 
+                            <i class="fas fa-chevron-right ml-1 text-sm group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-800 text-white py-12 mt-auto">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 border-b border-primary-700 pb-2">Contact</h3>
+                    <div class="space-y-3 text-gray-300">
+                        <p>Faculté Polydisciplinaire</p>
+                        <p>BP 592, Mghila, Beni Mellal</p>
+                        <p>Téléphone: +212 5XX XX XX XX</p>
+                        <p>Email: contact@fpbm.ma</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 border-b border-primary-700 pb-2">Liens Rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Accueil</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Formations</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Recherche</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors">Bibliothèque</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 border-b border-primary-700 pb-2">Suivez-nous</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="social-icon bg-primary-700 hover:bg-primary-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon bg-primary-700 hover:bg-primary-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-icon bg-primary-700 hover:bg-primary-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-icon bg-primary-700 hover:bg-primary-600 w-10 h-10 rounded-full flex items-center justify-center">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-primary-700 mt-8 pt-6 text-center text-gray-300">
+                <p>&copy; <span id="current-year"></span> Faculté Polydisciplinaire de Beni Mellal. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        // Initially hide the mobile menu
+        mobileMenu.style.display = 'none';
+        
+        mobileMenuButton.addEventListener('click', function() {
+            if (mobileMenu.style.display === 'none') {
+                mobileMenu.style.display = 'block';
+                setTimeout(() => {
+                    mobileMenu.classList.add('active');
+                }, 10);
+            } else {
+                mobileMenu.classList.remove('active');
+                setTimeout(() => {
+                    mobileMenu.style.display = 'none';
+                }, 300);
+            }
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideMenu = mobileMenu.contains(event.target);
+            const isClickOnButton = mobileMenuButton.contains(event.target);
+            
+            if (!isClickInsideMenu && !isClickOnButton && mobileMenu.style.display === 'block') {
+                mobileMenu.classList.remove('active');
+                setTimeout(() => {
+                    mobileMenu.style.display = 'none';
+                }, 300);
+            }
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Reveal animations on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-slide-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        // Observe elements with animation classes
+        document.querySelectorAll('.card-hover').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+        
+        // Initialize animations after page load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.card-hover').forEach(el => {
+                el.style.opacity = '1';
+            });
+        });
+    </script>
+</body>
+</html>

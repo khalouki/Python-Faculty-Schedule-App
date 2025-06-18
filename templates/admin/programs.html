@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Gestion des Filières</h2>
+
+    <!-- Card for Adding Program -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold text-gray-700 mb-4">Ajouter une filière</h4>
+        <form method="POST" action="{{ url_for('admin.manage_programs') }}" class="space-y-6">
+            <input type="hidden" name="_method" value="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nom de la filière</label>
+                    <input type="text" id="name" name="name" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                </div>
+                <div>
+                    <label for="department" class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+                    <select id="department" name="department" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        {% for department in departments %}
+                        <option value="{{ department.id }}">{{ department.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="duration" class="block text-sm font-medium text-gray-700 mb-2">Durée (années)</label>
+                    <input type="number" id="duration" name="duration" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required min="1">
+                </div>
+                <div>
+                    <label for="year" class="block text-sm font-medium text-gray-700 mb-2">Année</label>
+                    <select id="year" name="year" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        <option value="1">1ère année</option>
+                        <option value="2">2ème année</option>
+                        <option value="3">3ème année</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200">Ajouter la filière</button>
+        </form>
+    </div>
+
+    <!-- Card for Program List -->
+    <div class="bg-white shadow-md rounded-lg p-6 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold text-gray-700 mb-4">Liste des filières</h4>
+        {% if programs %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-[#f1e9e9] border-solid border-[1px] divide-y divide-gray-200">
+                <thead class="bg-purple-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Département</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Durée</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Année</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Date de création</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for program in programs %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ program.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ program.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ program.department.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ program.duration }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ program.year }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ program.created_at.strftime('%d/%m/%Y') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <button type="button" class="text-white font-bold bg-blue-600 rounded w-20 p-2 mr-4" onclick="openEditModal({{ program.id }}, '{{ program.name }}', '{{ program.department.id }}', {{ program.duration }}, {{ program.year }})">Modifier</button>
+                            <form action="{{ url_for('admin.delete_program', program_id=program.id) }}" method="POST" class="inline">
+                                <button type="submit" class="text-white font-bold bg-red-500 rounded w-20 p-2 mr-4" onclick="return confirm('Voulez-vous vraiment supprimer cette filière ?')">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center py-4">Aucune filière trouvée. Ajoutez une filière pour commencer.</p>
+        {% endif %}
+    </div>
+
+    <!-- Modal for Editing Program -->
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4">Modifier la filière</h3>
+            <form method="POST" action="{{ url_for('admin.manage_programs') }}" class="space-y-4">
+                <input type="hidden" name="_method" value="PUT">
+                <input type="hidden" name="program_id" id="edit_program_id">
+                <div>
+                    <label for="edit_name" class="block text-sm font-medium text-gray-700 mb-2">Nom de la filière</label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_name" name="name" required>
+                </div>
+                <div>
+                    <label for="edit_department" class="block text-sm font-medium text-gray-700 mb-2">Département</label>
+                    <select id="edit_department" name="department" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        {% for department in departments %}
+                        <option value="{{ department.id }}">{{ department.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="edit_duration" class="block text-sm font-medium text-gray-700 mb-2">Durée (années)</label>
+                    <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_duration" name="duration" required min="1">
+                </div>
+                <div>
+                    <label for="edit_year" class="block text-sm font-medium text-gray-700 mb-2">Année</label>
+                    <select id="edit_year" name="year" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                        <option value="1">1ère année</option>
+                        <option value="2">2ème année</option>
+                        <option value="3">3ème année</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" class="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200" onclick="closeEditModal()">Annuler</button>
+                    <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/admin_prog.js') }}?v={{ config.VERSION }}"></script>
+
+{% endblock %}

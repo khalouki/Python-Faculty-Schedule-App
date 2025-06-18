@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Gestion des Salles</h2>
+
+    <!-- Card for Adding Room -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold text-gray-700 mb-4">Ajouter une salle</h4>
+        <form method="POST" action="{{ url_for('admin.manage_rooms') }}" class="space-y-6">
+            <input type="hidden" name="_method" value="POST">
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nom de la salle</label>
+                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="capacity" class="block text-sm font-medium text-gray-700 mb-2">Capacité</label>
+                <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="capacity" name="capacity" required min="1">
+            </div>
+            <div>
+                <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Type de salle</label>
+                <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="type" name="type" required>
+                    <option value="Amphi">Amphithéâtre</option>
+                    <option value="Salle TD">Salle de TD</option>
+                    <option value="Salle TP">Salle de TP</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full py-2 bg-blue-600  text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200">Ajouter la salle</button>
+        </form>
+    </div>
+
+    <!-- Card for Room List -->
+    <div class="bg-white shadow-md rounded-lg p-6 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold text-gray-700 mb-4">Liste des salles</h4>
+        {% if rooms %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-[#f1e9e9] border-solid border-[1px] divide-y divide-amber-200">
+                <thead class="bg-purple-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Capacité</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-teal-600  uppercase tracking-wider text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-amber-200">
+                    {% for room in rooms %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">{{ room.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">{{ room.capacity }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-center">{{ room.type }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm flex justify-center">
+                            <button type="button" class="text-white font-bold bg-blue-600  rounded w-20 p-2 mr-4" onclick="openEditModal({{ room.id }}, '{{ room.name }}', {{ room.capacity }}, '{{ room.type }}')">Modifier</button>
+                            <form action="{{ url_for('admin.delete_room', room_id=room.id) }}" method="POST" class="inline">
+                                <button type="submit" class="text-white font-bold bg-red-500 rounded w-20 p-2 mr-4" onclick="return confirm('Voulez-vous vraiment supprimer cette salle ?')">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center py-4">Aucune salle trouvée. Ajoutez une salle pour commencer.</p>
+        {% endif %}
+    </div>
+<!-- Modal for Editing Room -->
+<div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-[1000] min-h-screen w-full">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Modifier la salle</h3>
+        <form method="POST" action="{{ url_for('admin.manage_rooms') }}" class="space-y-4">
+            <input type="hidden" name="_method" value="PUT">
+            <input type="hidden" name="room_id" id="edit_room_id">
+            <div>
+                <label for="edit_name" class="block text-sm font-medium text-gray-700 mb-2">Nom de la salle</label>
+                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_name" name="name" required>
+            </div>
+            <div>
+                <label for="edit_capacity" class="block text-sm font-medium text-gray-700 mb-2">Capacité</label>
+                <input type="number" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_capacity" name="capacity" required min="1">
+            </div>
+            <div>
+                <label for="edit_type" class="block text-sm font-medium text-gray-700 mb-2">Type de salle</label>
+                <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_type" name="type" required>
+                    <option value="Amphi">Amphithéâtre</option>
+                    <option value="Salle TD">Salle de TD</option>
+                    <option value="Salle TP">Salle de TP</option>
+                </select>
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="button" class="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200" onclick="closeEditModal()">Annuler</button>
+                <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">Enregistrer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/admin_rooms.js') }}?v={{ config.VERSION }}"></script>
+
+{% endblock %}

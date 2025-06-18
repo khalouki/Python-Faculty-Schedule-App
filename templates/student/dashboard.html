@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold mb-6 animate__animated animate__fadeIn">Mon Emploi du Temps</h2>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6 animate__animated animate__fadeInUp">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <h4 class="text-xl font-semibold mb-2">Informations de l'étudiant</h4>
+                <p class="text-gray-700"><strong>Nom :</strong> {{ student_name }}</p>
+                <p class="text-gray-700"><strong>Filière :</strong> {{ program_name }}</p>
+                <p class="text-gray-700"><strong>Année :</strong> {{ year }}<sup>e</sup> année</p>
+            </div>
+            
+            <!-- PDF Export Button -->
+            <div class="flex items-end justify-end">
+                <a href="{{ url_for('student.export_student_schedule_pdf') }}" 
+                   class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Exporter en PDF
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6 animate__animated animate__fadeInUp">
+        <h4 class="text-xl font-semibold mb-4">Mes cours</h4>
+        <!-- Schedule Grid -->
+        {% if schedule_grid %}
+        <div class="overflow-x-auto">
+            <table id="schedule_grid" class="min-w-full border border-gray-200 divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">Jour \ Heure</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">08h30-10h30</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">10h40-12h40</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">13h00-15h00</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">15h10-17h10</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-200">17h20-19h20</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for day in days %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600 border border-gray-200">{{ day }}</td>
+                        {% for slot_idx in range(time_slots|length) %}
+                        {% set start_time, end_time = time_slots[slot_idx] %}
+                        <td class="px-6 py-4 text-sm text-gray-600 border border-gray-200" data-day="{{ day }}" data-slot="{{ start_time }}-{{ end_time }}">
+                            {% for schedule in schedule_grid[day][slot_idx] %}
+                            <div class="bg-blue-100 p-2 rounded mb-1 text-center" data-schedule-id="{{ schedule.id }}">
+                                <div class="font-semibold">{{ schedule.course.name }} ({{ schedule.course.type }})</div>
+                                <div>Pr: {{ schedule.teacher.last_name }}</div>
+                                <div>{{ schedule.group.name if schedule.group else 'Tous' }}</div>
+                                <div>Salle: {{ schedule.room.name }}</div>
+                            </div>
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500 text-center">Aucun cours programmé pour votre filière et année. Veuillez contacter l'administrateur.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

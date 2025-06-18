@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 animate__animated animate__fadeIn">Gestion des Enseignants</h2>
+
+    <!-- Card for Adding Teacher -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-8 animate__animated animate__fadeInUp">
+      <h4 class="text-xl font-semibold text-gray-700 mb-4">Ajouter un enseignant</h4>
+      <form method="POST" action="{{ url_for('admin.manage_teachers') }}" class="space-y-6">
+        <input type="hidden" name="_method" value="POST" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
+            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="username" name="username" required />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="email" name="email" required />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+            <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="password" name="password" required />
+          </div>
+          <div>
+            <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+            <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="type" name="type" required>
+              <option value="Permanent">Permanent</option>
+              <option value="Vacataire">Vacataire</option>
+            </select>
+          </div>
+          <div>
+            <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="first_name" name="first_name" required />
+          </div>
+          <div>
+            <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="last_name" name="last_name" required />
+          </div>
+        </div>
+        <button type="submit" class="w-full py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200">Ajouter l'enseignant</button>
+      </form>
+    </div>
+
+    <!-- Card for Teacher List -->
+    <div class="bg-white shadow-md rounded-lg p-6 animate__animated animate__fadeInUp">
+      <h4 class="text-xl font-semibold text-gray-700 mb-4">Liste des enseignants</h4>
+      {% if teachers %}
+        <div class="overflow-x-auto">
+          <table class="min-w-full border border-[#f1e9e9] border-solid border-[1px] divide-y divide-teal-200">
+            <thead class="bg-purple-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Nom complet</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Type</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Date de création</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-teal-600 uppercase tracking-wider text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-teal-200">
+              {% for teacher in teachers %}
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ teacher.id }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ teacher.first_name }} {{ teacher.last_name }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ teacher.type }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ teacher.user.email }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ teacher.created_at.strftime('%d/%m/%Y') }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <button type="button" class="text-white font-bold bg-blue-600 rounded w-20 p-2 mr-4" onclick="openEditModal({{ teacher.id }}, '{{ teacher.user.username }}', '{{ teacher.user.email }}', '{{ teacher.first_name }}', '{{ teacher.last_name }}', '{{ teacher.type }}')">Modifier</button>
+                    <form action="{{ url_for('admin.delete_teacher', teacher_id=teacher.id) }}" method="POST" class="inline">
+                      <button type="submit" class="text-white font-bold bg-red-500 rounded w-20 p-2 mr-4" onclick="return confirm('Voulez-vous vraiment supprimer cet enseignant ?')">Supprimer</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-500 text-center py-4">Aucun enseignant trouvé. Ajoutez un enseignant pour commencer.</p>
+      {% endif %}
+    </div>
+
+    <!-- Modal for Editing Teacher -->
+    <div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden overflow-y-auto z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Modifier l'enseignant</h3>
+        <form method="POST" action="{{ url_for('admin.manage_teachers') }}" class="space-y-4">
+          <input type="hidden" name="_method" value="PUT" />
+          <input type="hidden" name="teacher_id" id="edit_teacher_id" />
+          <div>
+            <label for="edit_username" class="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
+            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_username" name="username" required />
+          </div>
+          <div>
+            <label for="edit_email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_email" name="email" required />
+          </div>
+          <div>
+            <label for="edit_password" class="block text-sm font-medium text-gray-700 mb-2">Nouveau mot de passe (facultatif)</label>
+            <input type="password" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_password" name="password" />
+          </div>
+          <div>
+            <label for="edit_first_name" class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_first_name" name="first_name" required />
+          </div>
+          <div>
+            <label for="edit_last_name" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+            <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_last_name" name="last_name" required />
+          </div>
+          <div>
+            <label for="edit_type" class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+            <select class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" id="edit_type" name="type" required>
+              <option value="Permanent">Permanent</option>
+              <option value="Vacataire">Vacataire</option>
+            </select>
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button type="button" class="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition duration-200" onclick="closeEditModal()">Annuler</button>
+            <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Email Confirmation Modal -->
+    <div id="emailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Notification par email</h3>
+        <p class="mb-4">Voulez-vous envoyer un email à l'enseignant avec ses informations de compte ?</p>
+        <div class="flex justify-end space-x-4">
+          <button type="button" class="py-2 px-4 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400" onclick="cancelEmail()">Non</button>
+          <button type="button" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="confirmEmail()">Oui</button>
+        </div>
+      </div>
+    </div>
+
+<!-- Hidden field for email confirmation -->
+<input type="hidden" id="send_email" name="send_email" value="false">
+  </div>
+  <script src="{{ url_for('static', filename='js/admin_teacher.js') }}?v={{ config.VERSION }}"></script>
+{% endblock %}
