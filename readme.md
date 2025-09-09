@@ -1,125 +1,56 @@
-Application de Gestion des Emplois du Temps
-Cette application web, développée avec Flask, permet de gérer les emplois du temps académiques. Les administrateurs peuvent ajouter, modifier et supprimer des créneaux horaires pour les cours, enseignants, salles et groupes, tandis que les enseignants et les étudiants ont accès à des tableaux de bord spécifiques.
-Table des matières
+# 🎓 Faculty Schedule Management Web Application
 
-Prérequis
-Installation
-Exécution du projet
-Comptes par défaut
-Structure du projet
-Dépannage
+A **web application for managing faculty schedules** built with **Flask** and HTML templates.  
 
-Prérequis
-Assurez-vous d'avoir installé :
+This project is designed for:
 
-Python (version 3.8 ou supérieure)
-pip (gestionnaire de paquets Python)
-Virtualenv (recommandé pour des environnements isolés)
-MySQL (serveur de base de données, version 8.0 ou supérieure)
-Git (pour cloner le dépôt)
+- **Students**: to check their class schedules  
+- **Teachers**: to view their teaching schedules  
+- **Admin staff**: to create, edit, and manage schedules  
 
-Les dépendances du projet sont listées dans requirements.txt :
-Flask
-Flask-Login
-Flask-SQLAlchemy
-pandas
-reportlab
-matplotlib
+It demonstrates **backend development with Flask**, **role-based functionality**, **template rendering**, and **basic web security practices** with a **MySQL database**.
 
-Installation
+---
 
-Cloner le dépôt
-git clone https://github.com/votre-nom-utilisateur/gestion-emplois-temps.git
-cd gestion-emplois-temps
+## ✨ Features
 
+- 🗓️ View schedules by user type (student/teacher)  
+- 👩‍🏫 Admin can add, edit, or delete schedules  
+- 🔐 User authentication for students, teachers, and admins  
+- 🛡️ Security measures:
+  - Parameterized queries to prevent SQL Injection
+  - Input validation and escaping to prevent XSS
+  - Secure password hashing
 
-Configurer un environnement virtuel
-python -m venv venv
-source venv/bin/activate  # Sous Windows : venv\Scripts\activate
+---
 
+## 🖼️ Screenshots
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b508cd14-7388-4fcc-828d-7c9c19fbacbc" width="450" />
+  <img src="https://github.com/user-attachments/assets/cf7a3e64-da7b-4a20-95c4-0b3dda68832b" width="450" />
+  <img src="https://github.com/user-attachments/assets/b75944ff-6ff2-4a32-a9b6-21a298baa10f"  width="450" />
+  <img src="https://github.com/user-attachments/assets/8d815a36-0ba8-4953-92c3-ffe3376fddbd"  width="450" />
+</p>
+---
 
-Installer les dépendances
-pip install -r requirements.txt
+## 🛠️ Tech Stack
 
-Installez également le pilote MySQL pour Python :
-pip install pymysql
+- **Backend**: Python, Flask  
+- **Frontend**: HTML, CSS, Jinja2 templates  
+- **Database**: MySQL  
+- **Security**: Parameterized queries, input sanitization, password hashing  
 
-Cela permet à Flask-SQLAlchemy de se connecter à MySQL.
+---
 
-Configurer MySQL
+## 📂 Project Structure
 
-Assurez-vous que le serveur MySQL est en cours d'exécution.
-Créez la base de données emploi_temps_db dans MySQL :mysql -u votre-utilisateur -p
-CREATE DATABASE emploi_temps_db;
-
-Remplacez votre-utilisateur par votre nom d'utilisateur MySQL et entrez votre mot de passe lorsque demandé.
-
-
-Configurer les variables d'environnementCréez un fichier .env à la racine du projet avec le contenu suivant :
-FLASK_APP=app.py
-FLASK_ENV=development
-SECRET_KEY=votre-clé-secrète
-DATABASE_URL=mysql+pymysql://votre-utilisateur:votre-mot-de-passe@localhost/emploi_temps_db
-
-
-Remplacez votre-clé-secrète par une chaîne aléatoire sécurisée.
-Remplacez votre-utilisateur et votre-mot-de-passe par vos identifiants MySQL.
-
-
-Configurer la base de donnéesInitialisez la base de données avec les commandes suivantes :
-python -m flask db init
-python -m flask db migrate
-python -m flask db upgrade
-
-Si un script de remplissage (seed.py) est disponible pour ajouter des données initiales (filières, cours, enseignants, utilisateurs), exécutez :
-python seed.py
-
-
-
-Exécution du projet
-
-Activer l'environnement virtuel (si ce n'est pas déjà fait)
-source venv/bin/activate  # Sous Windows : venv\Scripts\activate
-
-
-Démarrer le serveur de développement Flask
-python -m flask run
-
-Alternativement, exécutez directement :
-python app.py
-
-
-Accéder à l'applicationOuvrez votre navigateur et allez à :
-http://localhost:5000
-
-
-Interface de connexion : /auth/login
-Tableau de bord administrateur : /admin/dashboard
-Gestion des emplois du temps : /admin/schedule
-
-
-
-Comptes par défaut
-Lors de la première configuration, l'application crée des comptes par défaut pour permettre un accès initial. Utilisez les identifiants suivants pour vous connecter :
-
-Administrateur
-Nom d'utilisateur : admin
-Mot de passe : admin
-
-
-Enseignant
-Nom d'utilisateur : abdelkhalk
-Mot de passe : password
-
-
-Étudiant
-Nom d'utilisateur : khalid
-Mot de passe : khalid
-
-
-
-Important : Après la première connexion, modifiez les mots de passe par défaut via les paramètres du profil utilisateur pour des raisons de sécurité.
-Si les comptes ne sont pas créés ou si la connexion échoue, exécutez le script de remplissage (s'il existe) :
-
-
-devloper par abdelkhalk essaid
+```bash
+faculty-management/
+│
+├── core/                 # Main Flask app folder
+├── pattern/              # Helper functions / business logic
+├── routes/               # Flask route definitions
+├── static/               # CSS, JS, images
+├── templates/            # HTML templates
+├── app.py                # 
+└── requirements.txt      # Python dependencies
