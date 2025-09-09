@@ -25,12 +25,38 @@ It demonstrates **backend development with Flask**, **role-based functionality**
 ---
 
 ## 🖼️ Screenshots
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/b508cd14-7388-4fcc-828d-7c9c19fbacbc" width="450" />
-  <img src="https://github.com/user-attachments/assets/cf7a3e64-da7b-4a20-95c4-0b3dda68832b" width="450" />
-  <img src="https://github.com/user-attachments/assets/b75944ff-6ff2-4a32-a9b6-21a298baa10f"  width="450" />
-  <img src="https://github.com/user-attachments/assets/8d815a36-0ba8-4953-92c3-ffe3376fddbd"  width="450" />
-</p>
+<table align="center">
+  <tr>
+    <td>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/b508cd14-7388-4fcc-828d-7c9c19fbacbc" width="450" />
+        <figcaption>Homepage</figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/cf7a3e64-da7b-4a20-95c4-0b3dda68832b" width="450" />
+        <figcaption>Add new Schedule</figcaption>
+      </figure>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/b75944ff-6ff2-4a32-a9b6-21a298baa10f" width="450" />
+        <figcaption>Admin Dashboard</figcaption>
+      </figure>
+    </td>
+    <td>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/8d815a36-0ba8-4953-92c3-ffe3376fddbd" width="450" />
+        <figcaption>Student View</figcaption>
+      </figure>
+    </td>
+  </tr>
+</table>
+
+
 ---
 
 ## 🛠️ Tech Stack
